@@ -24,7 +24,7 @@ export default class Chat extends React.Component {
               onChangeText={(name) => this.setState({name})}
               value={this.state.name}
               placeholder='Your Name'
-              placeholderTextColor='#757083'
+              placeholderTextColor='rgba(117, 112, 131, 0.6)'
             />
             <Text style={styles.chooseColorText}>Choose Background Color:</Text>
             <View style={styles.chatBackgroundColor}>
@@ -40,7 +40,7 @@ export default class Chat extends React.Component {
               />
               <TouchableOpacity
                 style={(this.state.selectedBackgroundButton == 2)
-                  ?[styles.chatBackgroundColor2,styles.selectedBackgroundButton]
+                  ?[styles.chatBackgroundColor2, styles.selectedBackgroundButton]
                   :styles.chatBackgroundColor2}
                 onPress={() => this.setState({ 
                   backgroundColor: '#474056',
@@ -49,7 +49,7 @@ export default class Chat extends React.Component {
               />
               <TouchableOpacity
                 style={(this.state.selectedBackgroundButton == 3)
-                  ?[styles.chatBackgroundColor3,styles.selectedBackgroundButton]
+                  ?[styles.chatBackgroundColor3, styles.selectedBackgroundButton]
                   :styles.chatBackgroundColor3}
                 onPress={() => this.setState({ 
                   backgroundColor: '#8A95A5',
@@ -58,7 +58,7 @@ export default class Chat extends React.Component {
               />
               <TouchableOpacity
                 style={(this.state.selectedBackgroundButton == 4)
-                  ?[styles.chatBackgroundColor4,styles.selectedBackgroundButton]
+                  ?[styles.chatBackgroundColor4, styles.selectedBackgroundButton]
                   :styles.chatBackgroundColor4}
                 onPress={() => this.setState({ 
                   backgroundColor: '#B9C6AE',
@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 45,
     fontWeight: '600',
-    height: 120
+    height: 120,
+    opacity: 0.8
   },
   loginContainer: {
     backgroundColor: '#FFFFFF',
@@ -121,14 +122,16 @@ const styles = StyleSheet.create({
     padding: 25,
     borderRadius: 2,
     fontSize: 16,
-    fontWeight: '300'
+    fontWeight: '300',
   },
   chooseColorText: {
     marginLeft: '6%',
     color: '#757083',
     fontSize: 16,
     fontWeight: '300',
-    paddingBottom: 2
+    paddingBottom: 2,
+    opacity: 0.8
+    
   },
   chatBackgroundColor: {
     flexDirection: 'row',
