@@ -29,6 +29,7 @@ export default class Chat extends React.Component {
             <Text style={styles.chooseColorText}>Choose Background Color:</Text>
             <View style={styles.chatBackgroundColor}>
               <TouchableOpacity
+              // these styling conditionals will add and remove selectedBackgroundButton class when you press on each color
                 style={(this.state.selectedBackgroundButton == 1)
                   ? [styles.chatBackgroundColor1, styles.selectedBackgroundButton]
                   : styles.chatBackgroundColor1}
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   },
   loginContainer: {
     backgroundColor: '#FFFFFF',
-    margin: '6%, 12%',
+    margin: '6%',
     justifyContent: 'space-around',
     width: '88%',
     height: '44%'
@@ -126,10 +127,10 @@ const styles = StyleSheet.create({
     marginLeft: '6%',
     color: '#757083',
     fontSize: 16,
-    fontWeight: '300'
+    fontWeight: '300',
+    paddingBottom: 2
   },
   chatBackgroundColor: {
-    display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center'
@@ -160,13 +161,13 @@ const styles = StyleSheet.create({
   },
   selectedBackgroundButton: { 
     borderColor: '#A7C7E7',
-    width: 75,
-    height: 75,
-    borderRadius: 37.5,
+    width: 65,
+    height: 65,
+    borderRadius: 32.5,
     borderWidth: 5,
   },
   chatButton: {
-    margin: '6%, 6%',
+    margin: '6%',
     padding: 25,
     backgroundColor: '#757083',
     borderRadius: 2,
