@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, ImageBackground, StyleSheet, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
-const backgroundImage = require('../assets/Background-Image.png');
+const backgroundImage = require('../assets/weChat-cover-background.jpeg');
 
 export default class Chat extends React.Component {
   constructor(props) {
@@ -121,19 +121,24 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   title: {
     textAlign: 'center',
     color: '#FFFFFF',
-    fontSize: 45,
+    fontSize: 50,
     fontWeight: '600',
-    height: 120,
-    opacity: 0.8
+    height: '40%',
+    opacity: 0.8,
+    textShadowOffset: {width: 4, height: 2},
+    textShadowRadius: 3,
+    textShadowColor: 'black',
   },
   loginContainer: {
+    flex: 1,
     backgroundColor: '#FFFFFF',
     margin: '6%',
+    marginBottom: '15%',
     justifyContent: 'space-between',
     width: '88%',
     height: '44%',

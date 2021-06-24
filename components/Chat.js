@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Platform, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import * as SecureStore from 'expo-secure-store'
 // import AsyncStorage from '@react-native-community/async-storage';
-// using deprecated version for now bc updated (above) does not work with expo ios
-import { AsyncStorage } from "react-native";
+// import { AsyncStorage } from "react-native";
 import NetInfo from '@react-native-community/netinfo';
 
 const firebase = require('firebase');
@@ -43,7 +43,7 @@ export default class Chat extends React.Component {
   async getMessages() {
     let messages = '';
     try {
-      messages = await AsyncStorage.getItem('messages') || [];
+      messages = (await SecureStore.getItemAsync('messages')) || [];
       this.setState({
         messages: JSON.parse(messages)
       });
@@ -56,7 +56,7 @@ export default class Chat extends React.Component {
   async saveMessages() {
     try {
       const jsonValue = JSON.stringify(this.state.messages);
-      await AsyncStorage.setItem('messages', jsonValue);
+      await SecureStore.setItemAsync('messages', jsonValue);
     } catch(error) {
       console.log(error.message)
     }
@@ -65,7 +65,7 @@ export default class Chat extends React.Component {
   // delete messages from client-side storage
   async deleteMessages() {
     try {
-      await AsyncStorage.removeItem('messages');
+      await SecureStore.deleteItemAsync('messages');
       this.setState({
         messages: []
       })
