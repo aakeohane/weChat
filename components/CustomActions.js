@@ -163,14 +163,14 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     borderRadius: 13,
-    borderColor: '#b2b2b2',
+    borderColor: '#757083',
     borderWidth: 2,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   iconText: {
-    color: '#b2b2b2',
+    color: '#757083',
     fontWeight: 'bold',
     fontSize: 16,
     backgroundColor: 'transparent',
