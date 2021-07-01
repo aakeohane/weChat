@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, Button, ImageBackground, StyleSheet, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView } from 'react-native';
+
 const backgroundImage = require('../assets/weChat-cover-background.jpeg');
 
 export default class Chat extends React.Component {
@@ -8,13 +9,15 @@ export default class Chat extends React.Component {
     this.state = { 
       name: '',
       backgroundColor: '',
-      selectedBackgroundButton: 1
+      selectedBackgroundButton: null,
     }
   }
+  
   render() {
     return (
       <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={-65}
       style={{flex: 1}}
       >
         <View style={styles.container}>

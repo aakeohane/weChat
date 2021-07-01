@@ -1,81 +1,58 @@
-import React from 'react';
-import { View, Platform, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import React, { Component } from 'react';
+import CustomActions from './CustomActions';
+import { View, Platform, StyleSheet, KeyboardAvoidingView, LogBox } from 'react-native';
+import { Bubble, GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
 import * as SecureStore from 'expo-secure-store'
+// AsyncStorage get warning so I cant use it had to find alternative above
 // import AsyncStorage from '@react-native-community/async-storage';
-// import { AsyncStorage } from "react-native";
 import NetInfo from '@react-native-community/netinfo';
+import MapView from 'react-native-maps';
 
 const firebase = require('firebase');
 require('firebase/firestore');
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC-ss-crf_xOfKvWBN7wfTuj5WWPBIYZiY",
-  authDomain: "test-8b6b2.firebaseapp.com",
-  projectId: "test-8b6b2",
-  storageBucket: "test-8b6b2.appspot.com",
-  messagingSenderId: "829771573633",
-  appId: "1:829771573633:web:5bb750d61146fd8a4ca080"
-}
 
-export default class Chat extends React.Component {
+export default class Chat extends Component {
   constructor() {
     super();
     this.state = {
       messages: [],
-      uid: '',
+      uid: 0,
       isConnected: false,
+      image: null,
       user: {
         _id: '',
         name: '',
         avatar: '',
       }
-    }
+    };
 
+    // firebase adding credentials in order to connect to firebase
     if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    // creates reference to collection made in Firestore called weChat throughout code
-    this.referenceChatMessages = firebase.firestore().collection('weChat');
-  }
-
-  // allows offline access to messages retrieved from client-side storage
-  async getMessages() {
-    let messages = '';
-    try {
-      messages = (await SecureStore.getItemAsync('messages')) || [];
-      this.setState({
-        messages: JSON.parse(messages)
+      firebase.initializeApp({
+        apiKey: "AIzaSyC-ss-crf_xOfKvWBN7wfTuj5WWPBIYZiY",
+        authDomain: "test-8b6b2.firebaseapp.com",
+        projectId: "test-8b6b2",
+        storageBucket: "test-8b6b2.appspot.com",
+        messagingSenderId: "829771573633",
+        appId: "1:829771573633:web:5bb750d61146fd8a4ca080"
       });
-    } catch (error) {
-      console.log(error.message);
     }
-  }
 
-  // saves new messages to client-side storage
-  async saveMessages() {
-    try {
-      const jsonValue = JSON.stringify(this.state.messages);
-      await SecureStore.setItemAsync('messages', jsonValue);
-    } catch(error) {
-      console.log(error.message)
-    }
-  }
+    // creates reference to collection made in Firestore called weChat throughout code
+    this.referenceChatMessages = firebase.firestore().collection("weChat"); 
 
-  // delete messages from client-side storage
-  async deleteMessages() {
-    try {
-      await SecureStore.deleteItemAsync('messages');
-      this.setState({
-        messages: []
-      })
-    } catch (error) {
-      console.log(error.message);
-    }
+    //Ignores warnings
+    LogBox.ignoreLogs([
+      'Animated',
+      'expo-permissions', 
+      'Setting a timer'
+    ]);
   }
 
   componentDidMount() {
     const { name } = this.props.route.params;
+    this.props.navigation.setOptions({ title: `${name}'s Chat` });
     /* calls fetch method to determine if user is offline or online with isConnected boolean 
     allowing you to fetch data from Firestore if online or asyncStorage if not */
     NetInfo.fetch().then(connection => {
@@ -98,7 +75,7 @@ export default class Chat extends React.Component {
             },
             messages: [],
           });
-          this.unsubscribeMessages = this.referenceChatMessages
+          this.unsubscribe = this.referenceChatMessages
             .orderBy('createdAt', 'desc')
             .onSnapshot(this.onCollectionUpdate);
         });
@@ -112,58 +89,99 @@ export default class Chat extends React.Component {
     })
   }
 
-  // adds messages to firebase database
-  addMessages() {
-    const message = this.state.messages[0];
-    this.referenceChatMessages.add({
-      _id: message._id,
-      uid: this.state.uid,
-      createdAt: message.createdAt,
-      text: message.text,
-      user: message.user,
-    })
+  componentWillUnmount() {
+    // Stop listening to authentication and collection changes 
+    this.authUnsubscribe();
+    this.unsubscribe();
   }
 
-  onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }),
-      () => {
-        //a callback function to setState so that once the state object is updated, you’ll save its current state into asyncStorage
-        this.addMessages();
-        this.saveMessages();
+  // temporary storage of messages
+  getMessages = async () => {
+    let messages = '';
+    try {
+      messages = (await SecureStore.getItemAsync('weChat')) || [];
+      this.setState({
+        messages: JSON.parse(messages),
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  // firebase storage
+  saveMessages = async () => {
+    try {
+      const jsonValue = JSON.stringify(this.state.messages);
+      await SecureStore.setItemAsync('weChat', jsonValue);
+    } catch(error) {
+      console.log(error.message)
+    }
+  };
+
+  deleteMessages = async () => {
+    try {
+      await SecureStore.deleteItemAsync('weChat');
+      this.setState({
+        messages: []
       })
+    } catch (error) {
+      console.log(error.message);
+    }
   }
-  
-  //retrieves the data in the collection at the time so that the state can change 
+
+  // pushed messages through from firebase storage database that were sent after leaving chat
   onCollectionUpdate = (querySnapshot) => {
     const messages = [];
+    // go through each document
     querySnapshot.forEach((doc) => {
-      let data = doc.data();
+      // get the QueryDocumentSnapshot's data
+      const data = doc.data();
       messages.push({
         _id: data._id,
-        text: data.text,
+        text: data.text || "",
         createdAt: data.createdAt.toDate(),
         user: {
           _id: data.user._id,
           name: data.user.name,
           avatar: data.user.avatar,
         },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({
       messages,
-    })
-  }
+    });
+  };
 
-  componentWillUnmount() {
-    // Stop listening to authentication and collection changes 
-    this.authUnsubscribe();
-    this.unsubscribeMessages();
-  }
+  // adds messages to the firestore database
+  addMessages = () => {
+    const message = this.state.messages[0];
+    this.referenceChatMessages.add({
+      _id: message._id,
+      text: message.text || "",
+      createdAt: message.createdAt,
+      user: message.user,
+      image: message.image || null,
+      location: message.location || null,
+    });
+  };
 
-  // change bubble color / disabled for now
-  renderBubble(props) {
+  // adds your own message to chat while saving to client side and database when you press send in chat
+  onSend = (messages = []) => {
+    this.setState(
+      (previousState) => ({
+        messages: GiftedChat.append(previousState.messages, messages),
+      }),
+      () => {
+        this.addMessages();
+        this.saveMessages();
+      }
+    );
+  };
+
+   // change bubble color / disabled for now
+  renderBubble = (props) => {
     return (
       <Bubble
         {...props}
@@ -176,16 +194,58 @@ export default class Chat extends React.Component {
     )
   }
 
-  // renders input toolbar through gifted chat props only when online
-  renderInputToolbar(props) {
+  // renders input toolbar through gifted chat props only when online, disappears when offline
+  renderInputToolbar = (props) => {
     if (this.state.isConnected === false) {
     } else {
       return (
         <InputToolbar
         {...props}
+        containerStyle={styles.inputContainer}
         />
       )
     }
+  }
+
+  // render the send button styling so it doesn take styling of text input box
+  renderSend = (props) => {
+    return (
+      <Send
+        {...props}
+        containerStyle={{
+          backgroundColor: 'transparent',
+          paddingBottom: 5,
+        }}
+      />
+    )
+  }
+
+ // renders custom Action button for sending pics/taking pics/sending location
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />
+  }
+
+  renderCustomView (props) {
+    const { currentMessage } = props;
+    if(currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 250,
+            height: 200,
+            borderRadius: 13,
+            margin: 3
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      )
+    }
+    return null;
   }
 
   render() {
@@ -193,12 +253,16 @@ export default class Chat extends React.Component {
     return (
       <View style={[styles.textContainer, { backgroundColor: backgroundColor }]}>
         <GiftedChat
-        // renderBubble={this.renderBubble.bind(this)}
-        renderInputToolbar={this.renderInputToolbar.bind(this)}
+        // renderBubble={this.renderBubble}
+        renderInputToolbar={this.renderInputToolbar}
+        renderCustomView={this.renderCustomView}
+        renderSend={this.renderSend}
         messages={this.state.messages}
         renderUsernameOnMessage={true}
         onSend={messages => this.onSend(messages)}
-        user={this.state.user}
+        user={{
+          _id: this.state.uid}}
+        renderActions={this.renderCustomActions}
         />
         { 
           Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null 
@@ -211,5 +275,15 @@ export default class Chat extends React.Component {
 const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
+  },
+  inputContainer: {
+    borderWidth: 1.5, 
+    borderTopWidth: 1.5, 
+    borderColor: '#757083', 
+    borderTopColor: '#757083', 
+    borderRadius: 15, 
+    paddingTop: 6,
+    width: '80%',
+    left: '10%',
   },
 })
