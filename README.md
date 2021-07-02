@@ -7,13 +7,13 @@ weChat is a simple messaging app for mobile devices built with **React Native** 
 - Users can enter their name and choose a background color for the chat screen
 - The chat UI is integrated through the [Gifted Chat library](https://github.com/FaridSafi/react-native-gifted-chat)
 - Users can send images, take pictures, and send their location after consenting permission
-- Google Firebase Cloud for database storage and local storage for offline access to previously sent messages
+- Google Cloud Firestore for database storage and local storage for offline access to previously sent messages
 
 ## Technologies
 
 - React Native
 - Expo
-- Google Firestore Database
+- Google Firebase Database
 - Gifted Chat UI library
 
 ## Getting Started ▶️
