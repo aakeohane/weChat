@@ -180,14 +180,14 @@ export default class Chat extends Component {
     );
   };
 
-   // change bubble color / disabled for now
+   // change text bubble color
   renderBubble = (props) => {
     return (
       <Bubble
         {...props}
         wrapperStyle={{
-          right: {
-            backgroundColor: '#000'
+          left: {
+            backgroundColor: '#ffffff'
           },
         }}
       />
@@ -253,15 +253,15 @@ export default class Chat extends Component {
     return (
       <View style={[styles.textContainer, { backgroundColor: backgroundColor }]}>
         <GiftedChat
-        // renderBubble={this.renderBubble}
+        renderBubble={this.renderBubble}
         renderInputToolbar={this.renderInputToolbar}
         renderCustomView={this.renderCustomView}
         renderSend={this.renderSend}
         messages={this.state.messages}
+        renderAvatar={this.renderAvatar}
         renderUsernameOnMessage={true}
         onSend={messages => this.onSend(messages)}
-        user={{
-          _id: this.state.uid}}
+        user={this.state.user}
         renderActions={this.renderCustomActions}
         />
         { 
