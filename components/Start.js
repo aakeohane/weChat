@@ -46,19 +46,19 @@ export default class Chat extends React.Component {
                   <View style={[styles.selectedBackgroundRing, (colorChoice === color) 
                     ? { borderColor: '#A7C7E7' } 
                     : null
-                ]}
-                key={color}>
-                <TouchableOpacity
-                  onPress={() => this.setState({ colorChoice: color })}
-                  style={[styles.touchableCircle, { backgroundColor: color }]}
-                  accessible={true}
-                  accessibilityLabel="chosen background color"
-                  accessibilityHint="lets you choose your background color for your chat"
-                  accessibilityRole="button"
-                />
+                  ]}
+                  key={color}>
+                  <TouchableOpacity
+                    onPress={() => this.setState({ colorChoice: color })}
+                    style={[styles.touchableCircle, { backgroundColor: color }]}
+                    accessible={true}
+                    accessibilityLabel="chosen background color"
+                    accessibilityHint="lets you choose your background color for your chat"
+                    accessibilityRole="button"
+                  />
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
               <TouchableOpacity
                 style={styles.chatButton}
                 onPress={() =>
