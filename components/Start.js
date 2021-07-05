@@ -8,12 +8,18 @@ export default class Chat extends React.Component {
     super(props);
     this.state = { 
       name: '',
-      backgroundColor: '',
-      selectedBackgroundButton: null,
+      colors: [
+        '#090C08',
+        '#474056',
+        '#8A95A5',
+        '#B9C6AE'
+      ],
+      colorChoice: '',
     }
   }
   
   render() {
+    const { name, colors, colorChoice } = this.state;
     return (
       <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -29,72 +35,36 @@ export default class Chat extends React.Component {
               <TextInput 
                 style={styles.nameInput}
                 onChangeText={(name) => this.setState({name})}
-                value={this.state.name}
+                value={name}
                 placeholder='Your Name'
                 placeholderTextColor='rgba(117, 112, 131, 0.6)'
               />
               <Text style={styles.chooseColorText}>Choose Background Color:</Text>
-              <View style={styles.chatBackgroundColor}>
+              <View style={styles.chatBackgroundColorContainer}>
+              {/* Iterates (map) over colors array to create cricles and show selected circle on press */}
+                {colors.map(color => (
+                  <View style={[styles.selectedBackgroundRing, (colorChoice === color) 
+                    ? { borderColor: '#A7C7E7' } 
+                    : null
+                ]}
+                key={color}>
                 <TouchableOpacity
-                // these styling conditionals will add and remove selectedBackgroundButton class when you press on each color
-                  style={(this.state.selectedBackgroundButton == 1)
-                    ? [styles.chatBackgroundColor1, styles.selectedBackgroundButton]
-                    : styles.chatBackgroundColor1}
-                  onPress={() => this.setState({ 
-                    backgroundColor: '#090C08',
-                    selectedBackgroundButton: 1 
-                  })}
+                  onPress={() => this.setState({ colorChoice: color })}
+                  style={[styles.touchableCircle, { backgroundColor: color }]}
                   accessible={true}
-                  accessibilityLabel="black background"
-                  accessibilityHint="lets you choose your background color for your chat"
-                  accessibilityRole="button"
-                />
-                <TouchableOpacity
-                  style={(this.state.selectedBackgroundButton == 2)
-                    ?[styles.chatBackgroundColor2, styles.selectedBackgroundButton]
-                    :styles.chatBackgroundColor2}
-                  onPress={() => this.setState({ 
-                    backgroundColor: '#474056',
-                    selectedBackgroundButton: 2 
-                  })}
-                  accessible={true}
-                  accessibilityLabel="purple background"
-                  accessibilityHint="lets you choose your background color for your chat"
-                  accessibilityRole="button"
-                />
-                <TouchableOpacity
-                  style={(this.state.selectedBackgroundButton == 3)
-                    ?[styles.chatBackgroundColor3, styles.selectedBackgroundButton]
-                    :styles.chatBackgroundColor3}
-                  onPress={() => this.setState({ 
-                    backgroundColor: '#8A95A5',
-                    selectedBackgroundButton: 3 
-                  })}
-                  accessible={true}
-                  accessibilityLabel="light blue background"
-                  accessibilityHint="lets you choose your background color for your chat"
-                  accessibilityRole="button"
-                />
-                <TouchableOpacity
-                  style={(this.state.selectedBackgroundButton == 4)
-                    ?[styles.chatBackgroundColor4, styles.selectedBackgroundButton]
-                    :styles.chatBackgroundColor4}
-                  onPress={() => this.setState({ 
-                    backgroundColor: '#B9C6AE',
-                    selectedBackgroundButton: 4 
-                  })}
-                  accessible={true}
-                  accessibilityLabel="green background"
+                  accessibilityLabel="chosen background color"
                   accessibilityHint="lets you choose your background color for your chat"
                   accessibilityRole="button"
                 />
               </View>
+            ))}
+          </View>
               <TouchableOpacity
                 style={styles.chatButton}
                 onPress={() =>
                   this.props.navigation.navigate('Chat', {
-                    name: this.state.name,
-                    backgroundColor: this.state.backgroundColor,
+                    name: name,
+                    color: this.state.colorChoice,
                   })
                 }
                 accessible={true}
@@ -164,41 +134,20 @@ const styles = StyleSheet.create({
     opacity: 0.8,
     justifyContent: 'space-between'
   },
-  chatBackgroundColor: {
+  chatBackgroundColorContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    alignItems: 'center'
   },
-  chatBackgroundColor1: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#090C08',
-  },
-  chatBackgroundColor2: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#474056',
-  },
-  chatBackgroundColor3: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#8A95A5',
-  },
-  chatBackgroundColor4: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#B9C6AE',
-  },
-  selectedBackgroundButton: { 
-    borderColor: '#A7C7E7',
+  touchableCircle: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    borderWidth: 5,
+  },
+  selectedBackgroundRing: { 
+    borderWidth: 3,
+    borderColor: '#fff',
+    borderRadius: 100,
+    padding: 3,
   },
   chatButton: {
     margin: '6%',
