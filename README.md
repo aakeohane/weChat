@@ -32,7 +32,7 @@ Start by downloading/cloning this repository.
 
 Then in the project root directory install the application's dependencies.
 
-```
+```sh
 npm install
 ```
 

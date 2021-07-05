@@ -61,7 +61,7 @@ export default class Chat extends Component {
           isConnected: true
         })
         console.log('online');
-        // listens for authentication changes, such as the user being logged in.
+        //  listens for authentication changes, such as the user being logged in.
         this.authUnsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
           if (!user) {
             await firebase.auth().signInAnonymously();
@@ -249,9 +249,9 @@ export default class Chat extends Component {
   }
 
   render() {
-    let { backgroundColor } = this.props.route.params
+    let { color } = this.props.route.params
     return (
-      <View style={[styles.textContainer, { backgroundColor: backgroundColor }]}>
+      <View style={[styles.textContainer, { backgroundColor: color }]}>
         <GiftedChat
         renderBubble={this.renderBubble}
         renderInputToolbar={this.renderInputToolbar}
