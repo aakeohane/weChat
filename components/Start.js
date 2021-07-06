@@ -12,7 +12,7 @@ export default class Chat extends React.Component {
         '#090C08',
         '#474056',
         '#8A95A5',
-        '#B9C6AE'
+        '#B9C6AE',
       ],
       colorChoice: '',
     }
@@ -41,7 +41,7 @@ export default class Chat extends React.Component {
               />
               <Text style={styles.chooseColorText}>Choose Background Color:</Text>
               <View style={styles.chatBackgroundColorContainer}>
-              {/* Iterates (map) over colors array to create cricles and show selected circle on press */}
+              {/* Iterates (map) over colors array to create cricles and set selected circle border color on press */}
                 {colors.map(color => (
                   <View style={[styles.selectedBackgroundRing, (colorChoice === color) 
                     ? { borderColor: '#A7C7E7' } 
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   selectedBackgroundRing: { 
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: 'transparent',
     borderRadius: 100,
     padding: 3,
   },
